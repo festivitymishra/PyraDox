@@ -109,30 +109,30 @@ python app.py
 
 ##### A. Validate Aadhaar card numbers using Verhoeff Algorithm. url = '/api/validate'
 ```python
-request_json = {"test_number": number} 
+request_json = {"test_number": 397788000234} 
 response_json = {'validity': 0 } #0|1 -> invalid|valid
 ```
 ##### B. Extract Aadhaar Number from image. url = '/api/ocr'
 ```python
-request_json = {"doc_b64": encoded_string}
+request_json = {"doc_b64": base64_encoded_string}
 response_json = {'aadhaar_list':['397788000234']} #enpty list if unable to find
 ```
 ##### C. Mask Aadhaar number card for given Aadhaar card number. url =  '/api/mask'
 ```python
-request_json = {"doc_b64": encoded_string, 'aadhaar': number_list}
-response_json = {'doc_b64_masked':encoded_string, 'is_masked': True} #if is_masked False then doc_b64_masked is None
+request_json = {"doc_b64": base64_encoded_string, 'aadhaar': ['397788000234']}
+response_json = {'doc_b64_masked':base64_encoded_string, 'is_masked': True} #if is_masked False then doc_b64_masked is None
 ```
 ##### D. Brut Mask any Readable Number from Aadhaar (works well on low res, bad quality images). url =  '/api/brut_mask'
 ```python
-request_json = {"doc_b64": encoded_string}
-response_json = {'doc_b64_brut_masked': encoded_string, 'mask_status': 'Done'}
+request_json = {"doc_b64": base64_encoded_string}
+response_json = {'doc_b64_brut_masked': base64_encoded_string, 'mask_status': 'Done'}
 
 ```
 ##### E. Bonus :100: Complete Sample Pipeline. url =  '/api/sample_pipe'
 ###### Usecase : Take an aadhaar card, extract its aadhaar number while checking number's validty, mask first 8 digits. If aadhaar number is not readable then mask possible numbers (brut mode) .
 ```python
-request_json = {"doc_b64": encoded_string, "brut" : True}
-response_json = {'doc_b64_masked':encoded_string, 'is_masked': True,'mode_executed' : "OCR-MASKING", 'aadhaar_list':"extracted_aadhaar_list", 'valid_aadhaar_list':valid_aadhaar_list}
+request_json = {"doc_b64": base64_encoded_string, "brut" : True}
+response_json = {'doc_b64_masked':base64_encoded_string, 'is_masked': True,'mode_executed' : "OCR-MASKING", 'aadhaar_list':"All Possible Aadhar Numbers of 12 digits", 'valid_aadhaar_list':['Valid Aadhar Numbers Only']}
 ```
 
 *****************************************************
@@ -156,8 +156,10 @@ Pull requests are welcome. For major changes, please open an issue first to disc
 
 - [x] Finish Dockerfile
 - [x] [Add Badges](https://shields.io/)
-- [ ] Push Docker image to hub
 - [ ] Add Class Preprocessing
+- [ ] Push Docker image to hub
+- [ ] Add Regex to extract Name, DOB, Gender.
+
 
 Please make sure to update tests as appropriate.
 
@@ -167,6 +169,11 @@ Please make sure to update tests as appropriate.
 ## Notes
 
 #### Sample Aadhar Cards are just samples taken from google search and not original documents.
+##### while working on this project, I came across some good repos on github :yum: which I am listing below.
+[Aadhar Number Validator and Generator](https://github.com/NikhilPanwar/aadharCardValidatorAndGenerator)
+[Aadhaar-Card-OCR](https://github.com/dilippuri/Aadhaar-Card-OCR)
 
 If there is anything totally unclear, or not working, please feel free to file an issue.
-[Email](utsav.iitkgp@gmail.com)
+reach out![Email](utsav.iitkgp@gmail.com) :innocent:
+
+If this project was helpful for you please show some love :star:
