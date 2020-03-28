@@ -174,6 +174,6 @@ Please make sure to update tests as appropriate.
 [Aadhaar-Card-OCR](https://github.com/dilippuri/Aadhaar-Card-OCR)
 
 If there is anything totally unclear, or not working, please feel free to file an issue.
-reach out![Email](utsav.iitkgp@gmail.com) :innocent:
+reach out at [Email](utsav.iitkgp@gmail.com) :innocent:
 
 If this project was helpful for you please show some love :star:
