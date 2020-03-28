@@ -5,11 +5,11 @@
 
 PyraDox is a simple tool which helps in document **digitization** by extracting text information and **masking** of personal information with the help of Tesseract-ocr.
 
-![Aadhaar to JSON](AadhaarCardOCR1.jpg?raw=true "Aadhaar Card image")
-
 #### Currently Supports :- 
 
 * **Aadhaar Card** is a 12-digit unique identity number that can be obtained voluntarily by residents or passport holders of India, based on their biometric and demographic data. The data is collected by the Unique Identification Authority of India (UIDAI), a statutory authority established in January 2009 by the government of India. 
+
+![PyraDox Features](PyraDox.jpg?raw=true "Features")
 
 *****************************************************
 
@@ -142,6 +142,11 @@ response_json = {'doc_b64_masked':encoded_string, 'is_masked': True,'mode_execut
 docker build -t pyradox .
 docker run -p 9001:9001 pyradox
 ```
+
+*****************************************************
+## Samples
+
+![PyraDox Samples](PyraDox Samples.jpg?raw=true "Samples")
 
 *****************************************************
 ## Contributing
