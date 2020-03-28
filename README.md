@@ -146,7 +146,7 @@ docker run -p 9001:9001 pyradox
 *****************************************************
 ## Samples
 
-![PyraDox Samples](PyraDox Samples.jpg?raw=true "Samples")
+![PyraDox Samples](PyraDox_Samples.jpg?raw=true "Samples")
 
 *****************************************************
 ## Contributing
