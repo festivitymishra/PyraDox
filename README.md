@@ -1,6 +1,7 @@
 # PyraDox
 
 [![Language](https://img.shields.io/badge/Python-3.6.5-blue)](https://github.com/festivitymishra/PyraDox)
+[![Docker](https://img.shields.io/badge/Docker-Build-Suc)](https://github.com/festivitymishra/PyraDox)
 
 PyraDox is a simple tool which helps in document **digitization** by extracting text information and **masking** of personal information with the help of Tesseract-ocr.
 
@@ -149,9 +150,9 @@ Pull requests are welcome. For major changes, please open an issue first to disc
 #### Tasks
 
 - [x] Finish Dockerfile
+- [x] [Add Badges](https://shields.io/)
 - [ ] Push Docker image to hub
 - [ ] Add Class Preprocessing
-- [ ] [Add Badges](https://shields.io/)
 
 Please make sure to update tests as appropriate.
 
