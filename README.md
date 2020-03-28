@@ -1,5 +1,7 @@
 # PyraDox
 
+[![Language](https://img.shields.io/badge/Python-3.6.5-blue)](https://github.com/festivitymishra/PyraDox)
+
 PyraDox is a simple tool which helps in document **digitization** by extracting text information and **masking** of personal information with the help of Tesseract-ocr.
 
 ![Aadhaar to JSON](AadhaarCardOCR1.jpg?raw=true "Aadhaar Card image")
