@@ -68,7 +68,7 @@ config = {'orient' : True,   #corrects orientation of image default -> True
           'skew' : True,     #corrects skewness of image default -> True
           'crop': True,      #crops document out of image default -> True
           'contrast' : True, #Bnw for Better OCR default -> True
-          'psm': [3,4,6],    #Google Tesseract  psm modes default -> 3,4,6 
+          'psm': [3,4,6],    #Google Tesseract  [psm modes](https://gist.github.com/festivitymishra/dec4a548c3be09ac74b9ae6fe28e6632.js) default -> 3,4,6 
           'mask_color': (0, 165, 255),  #Masking color BGR Format
           'brut_psm': [6]    #Keep only one for brut mask (6) is good to start
           }
