@@ -156,4 +156,9 @@ Please make sure to update tests as appropriate.
 ## License
 [Apache License 2.0](https://github.com/festivitymishra/PyraDox/blob/master/LICENSE)
 
-Please disclose source.
+## Notes
+
+#### Sample Aadhar Cards are just samples taken from google search and not original documents.
+
+If there is anything totally unclear, or not working, please feel free to file an issue.
+[Email](utsav.iitkgp@gmail.com)
