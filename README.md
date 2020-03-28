@@ -64,7 +64,7 @@ pytesseract.pytesseract.tesseract_cmd = r'C:\Users\USER\AppData\Local\Tesseract-
 ## Usage
 
 ##### Initialisation & Configuration 
-###### [psm modes](https://gist.github.com/festivitymishra/dec4a548c3be09ac74b9ae6fe28e6632.js)
+###### [psm modes](https://github.com/tesseract-ocr/tesseract/issues/434)
 ```python
 from Aadhaar import Aadhaar_Card
 config = {'orient' : True,   #corrects orientation of image default -> True
