@@ -7,11 +7,15 @@ Created on Thu Mar 20 00:16:35 2020
 """
 
 import cv2
-from PIL import Image
+#from PIL import Image
 import pytesseract
 from pytesseract import Output
 import re
-import os
+#import os
+import numpy as np
+import math
+from scipy import ndimage
+import face_recognition
 
 class Aadhaar_Card():
     #Constructor
