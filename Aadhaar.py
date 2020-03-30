@@ -14,13 +14,16 @@ import re
 #import os
 import numpy as np
 import math
+import uuid
 from scipy import ndimage
-import face_recognition
+#import face_recognition
 
 class Aadhaar_Card():
+    
     #Constructor
     def __init__(self,config = {'orient' : True,'skew' : True,'crop': True,'contrast' : True,'psm': [3,4,6],'mask_color': (0, 165, 255), 'brut_psm': [6]}):
         self.config = config
+        self.uuid=uuid.uuid4();
     # Validates Aadhaar card numbers using Verhoeff Algorithm.
     # Fails if the fake number is generated using same Algorithm.
     def validate(self,aadhaarNum):
@@ -57,22 +60,40 @@ class Aadhaar_Card():
 
         
     def extract(self, path):  #("path of input image")
+        print(path);
         self.image_path = path
         self.read_image_cv()
+        #print("Pre Process")
+
+        #print('extract : Orient checking')    
         if self.config['orient']:
+            #print('extract : Orient checking Inside')    
+            #print(self.cv_img)
             self.cv_img = self.rotate(self.cv_img)
+            #print('extract : Orient Passed')
             
+        #print('extract : skew checking')    
         if self.config['skew']:
-            print("skewness correction not available")
-        
+            a=False
+            #print("skewness correction not available")
+            #print('extract : skew Passed')
+
+        #print('extract : crop checking')    
         if self.config['crop']:
-            print("Smart Crop not available")
+            a=False
+            #print("Smart Crop not available")
+
+            #print('extract : crop Passed')
         
+        #print('extract : contrast checking')    
         if self.config['contrast']:
-            self.pil_img  = self.contrast_image(self.pil_img )
-            print("correcting contrast")
-            
+            self.pil_img  = self.contrast_image(self.img)
+            #print("correcting contrast")
+            #print('extract : contrast Passed')
+        
+        print('Aadhar Text Extractor')    
         aadhaars = set()
+        #print("PSM LENTH {0}".format(len(self.config['psm'])))
         for i in range(len(self.config['psm'])):
             t = self.text_extractor(self.pil_img,self.config['psm'][i])
             anum = self.is_aadhaar_card(t)
@@ -151,14 +172,14 @@ class Aadhaar_Card():
         self.angle_in_degrees = angle_in_degrees
         rotated = ndimage.rotate(self.img, self.angle_in_degrees)
         return rotated
-    
+    '''
     def is_image_upside_down(self, img):
         self.img = img
         face_locations = face_recognition.face_locations(self.img)
         encodings = face_recognition.face_encodings(self.img, face_locations)
         image_is_upside_down = (len(encodings) == 0)
         return image_is_upside_down
-    
+    '''
     def save_image(self, img):
         self.img = img
         cv2.imwrite('orientation_corrected.jpg', self.img)
@@ -175,34 +196,44 @@ class Aadhaar_Card():
     
     # Corrects orientation of image using tesseract OSD if rotation Angle is < 100.
     def rotate(self,img):
-    #def orientation_correction(img): #, save_image = False):
+        #print("orientation_correction")
+        #print(img)
+        #def orientation_correction(img): #, save_image = False):
         # GrayScale Conversion for the Canny Algorithm 
         self.img = img
         img_gray = cv2.cvtColor(self.img, cv2.COLOR_BGR2GRAY) 
-        self.display(img_gray)
+        #self.display(img_gray)
+        
+        #print("Edge Detection")
         # Canny Algorithm for edge detection was developed by John F. Canny not Kennedy!! :)
         img_edges = cv2.Canny(img_gray, 100, 100, apertureSize=3)
-        self.display(img_edges)
+        #self.display(img_edges)
         # Using Houghlines to detect lines
+
+        #print("Edge Detection :Using Houghlines to detect lines")
         lines = cv2.HoughLinesP(img_edges, 1, math.pi / 180.0, 100, minLineLength=100, maxLineGap=5)
         img_copy = self.img.copy()
         for x in range(0, len(lines)):
             for x1,y1,x2,y2 in lines[x]:
                 cv2.line(img_copy,(x1,y1),(x2,y2),(0,255,0),2)
-        cv2.imshow('hough',img_copy)
-        cv2.waitKey(0)
+        #cv2.imshow('hough',img_copy)
+        #00cv2.waitKey(0)
         
         angles = []
         for x1, y1, x2, y2 in lines[0]:
             angle = math.degrees(math.atan2(y2 - y1, x2 - x1))
             angles.append(angle)
-        
+
+        #print("Find Angles")
         # Getting the median angle
         median_angle = np.median(angles)
+        #print(median_angle)
         # Rotating the image with this median angle
-        img_rotated = self.rotate(self.img, median_angle)
-        self.display(img_rotated)
+        img_rotated = self.rotate_only(self.img, median_angle)
+        #print("Rotating the image with this median angle")
         
+        #self.display(img_rotated)
+        '''
         if self.is_image_upside_down(img_rotated):
             print("rotate to 180 degree")
             angle = -180
@@ -218,14 +249,17 @@ class Aadhaar_Card():
             self.display(img_rotated)
             print("image is straight")
             return img_rotated
+        '''
+        return img_rotated
 
    
     def contrast_image(self, img):
-        self.img = img
+        #print("Inside contrast_image")
+        self.img = self.img
         gray = cv2.cvtColor(self.img, cv2.COLOR_BGR2GRAY)
         #gray = cv2.bitwise_not(gray)
         thresh = cv2.threshold(gray, 0, 255, cv2.THRESH_BINARY | cv2.THRESH_OTSU)[1]
-        self.display(thresh)
+        #self.display(thresh)
         return thresh
 
     

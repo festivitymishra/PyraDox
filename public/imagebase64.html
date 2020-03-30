@@ -1,0 +1,285 @@
+<html>
+
+<head>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js">
+    </script>
+    <style>
+        #leftbox { 
+                float:left;  
+                background:ghostwhite; 
+                width:44%; 
+                margin: 1.5%;
+                height:560px; 
+                padding: 1%;
+            } 
+            #middlebox{ 
+                float:left;  
+                background:Green; 
+                width:50%; 
+                margin: 5%;
+                height:280px; 
+            } 
+            #rightbox{ 
+                float:right; 
+                background:wheat; 
+                width:44%; 
+                margin: 1.5%;
+                padding: 1%;
+                height:560px; 
+            } 
+    </style>
+</head>
+
+<body>
+    <input type="file" name="a">
+    <input type="submit" name="base64ToImg" onclick="base64ToImage()">
+    
+    <!-- <input type="submit" value="ValidateAadharnumber" name="ValidateAadharnumber" onclick="ValidateAadharnumber('397788000234')">  -->
+    <input type="submit" value="ExtractAadhar" name="receiveFromServer" onclick="ExtractAadhar()">
+    <input type="submit" value="BrutMask" name="BrutMask" onclick="BrutmasskAadharnumber()">
+    <input type="submit" value="Mask8Digits" name="Mask8Digits" onclick="Mask8Digits()">
+    
+
+    <br>
+   
+    <div>
+         <div id = "leftbox"> 
+            <br>
+            Base64 to Image :<br>
+            <input type="image" id="pic1" style="height: 95%;width:100%">
+        </input>
+         </div>
+         <div id = "rightbox">
+            <br>
+           Mask Base64 to Image :<br>  
+            <input type="image" id="pic2" style="height: 95%;width:100%"> 
+        </input>
+         </div>
+         
+    </div>
+    
+
+
+<br>
+    <br>
+    Image to Base64 Text :<br>
+    <textarea id="description" rows="10" cols="300">
+                                </textarea>
+
+    <br><br>
+</body>
+
+<script type="text/javascript">
+
+    var ImageInB64;
+    function base64ToImage() {
+        console.log("base64ToImage");
+        var base64data = document.getElementById("description").value
+        insertText(base64data);
+
+    }
+    var input = document.querySelector('input[type=file]');
+    // You will receive the Base64 value every time a user selects a file from his device
+    // As an example I selected a one-pixel red dot GIF file from my computer
+    input.onchange = function () {
+        var file = input.files[0],
+            reader = new FileReader();
+
+
+        console.log(file);
+        reader.onloadend = function () {
+            // Since it contains the Data URI, we should remove the prefix and keep only Base64 string
+            console.log("##################");
+            console.log(reader.result);
+            var b64 = reader.result.replace(/^data:.+;base64,/, '');
+            console.log(b64); //->
+            insertText(b64);
+            ImageInB64 = b64;
+        };
+
+        reader.readAsDataURL(file);
+    };
+
+    function insertText(text) {
+        document.getElementById("description").innerHTML = text;
+        createImgeFromBase64(text);
+    }
+
+    function createImgeFromBase64(text) {
+        var image = new Image();
+        image.src = 'data:image/png;base64,' + text;
+        //document.body.appendChild(image);
+        document.getElementById("pic1").src = image.src;
+    }
+
+    function sendImage() {
+        getFromserver(ImageInB64)
+    }
+   
+
+    function createMaskImgeFromBase64(text) {
+        var image = new Image();
+        image.src = 'data:image/png;base64,' + text;
+        //document.body.appendChild(image);
+        document.getElementById("pic2").src = image.src;
+    }
+
+    function getFromserver(p_ImageInB64) {
+
+        var request = $.ajax({
+            url: "http://localhost:9001/api/test",
+            method: "POST",
+            headers: {
+                'Content-Type': "application/json"
+            },
+            data: JSON.stringify({ "image": "Sample", "data": p_ImageInB64 }),
+            dataType: "json",
+        })
+        request.done(function (body) {
+            
+            console.log(body);
+            
+            createMaskImgeFromBase64(body['masked_b64_image']['py/b64']);
+            
+
+            //document.getElementById("pic1").src = text;
+
+            //if b64 not contains prefix data:image/png;base64 then use following method;
+            // createImgeFromBase64(text);
+        });
+
+        request.fail(function (jqXHR, textStatus) {
+            //alert("Request failed: " + textStatus);
+            console.log(jqXHR);
+            console.log(textStatus);
+        });
+
+
+    }
+    
+    
+    
+    function ExtractAadhar() {
+        p_ImageInB64 =ImageInB64;
+        var request = $.ajax({
+            url: "http://localhost:9001/api/ocr",
+            method: "POST",
+            headers: {
+                'Content-Type': "application/json"
+            },
+            data: JSON.stringify({ "image": "Sample", "doc_b64": p_ImageInB64 }),
+            dataType: "json",
+        })
+        request.done(function (body) {
+            
+            console.log(body);
+            
+            createMaskImgeFromBase64(body['masked_b64_image']['py/b64']);
+            
+
+            //document.getElementById("pic1").src = text;
+
+            //if b64 not contains prefix data:image/png;base64 then use following method;
+            // createImgeFromBase64(text);
+        });
+
+        request.fail(function (jqXHR, textStatus) {
+            //alert("Request failed: " + textStatus);
+            console.log(jqXHR);
+            console.log(textStatus);
+        });
+    }
+    function ValidateAadharnumber(p_aadharnum) {
+        
+        var request = $.ajax({
+            url: "http://localhost:9001/api/validate",
+            method: "POST",
+            headers: {
+                'Content-Type': "application/json"
+            },
+            data: JSON.stringify({ "test_number": p_aadharnum }),
+            dataType: "json",
+        })
+        request.done(function (body) {
+            
+            console.log(body);
+            
+            //createMaskImgeFromBase64(body['masked_b64_image']['py/b64']);
+            
+
+            //document.getElementById("pic1").src = text;
+
+            //if b64 not contains prefix data:image/png;base64 then use following method;
+            // createImgeFromBase64(text);
+        });
+
+        request.fail(function (jqXHR, textStatus) {
+            //alert("Request failed: " + textStatus);
+            console.log(jqXHR);
+            console.log(textStatus);
+        });
+    }
+
+
+    function BrutmasskAadharnumber() {
+        p_ImageInB64 =ImageInB64;
+        var request = $.ajax({
+            url: "http://localhost:9001/api/brut_mask",
+            method: "POST",
+            headers: {
+                'Content-Type': "application/json"
+            },
+            data: JSON.stringify({ "doc_b64": p_ImageInB64 }),
+            dataType: "json",
+        })
+        request.done(function (body) {
+            
+            console.log(body);
+            
+            createMaskImgeFromBase64(body['doc_b64_brut_masked']);
+            
+
+            //document.getElementById("pic1").src = text;
+
+            //if b64 not contains prefix data:image/png;base64 then use following method;
+            // createImgeFromBase64(text);
+        });
+
+        request.fail(function (jqXHR, textStatus) {
+            //alert("Request failed: " + textStatus);
+            console.log(jqXHR);
+            console.log(textStatus);
+        });
+    }
+    function Mask8Digits() {
+        p_ImageInB64 =ImageInB64;
+        var request = $.ajax({
+            url: "http://localhost:9001/api/Mask8Digits",
+            method: "POST",
+            headers: {
+                'Content-Type': "application/json"
+            },
+            data: JSON.stringify({ "doc_b64": p_ImageInB64 }),
+            dataType: "json",
+        })
+        request.done(function (body) {
+            
+            console.log(body);
+            
+            createMaskImgeFromBase64(body['doc_b64_masked']);
+            
+
+        });
+
+        request.fail(function (jqXHR, textStatus) {
+            //alert("Request failed: " + textStatus);
+            console.log(jqXHR);
+            console.log(textStatus);
+        });
+    }
+
+    
+
+</script>
+
+</html>
