@@ -157,6 +157,7 @@ Pull requests are welcome. For major changes, please open an issue first to disc
 - [x] Finish Dockerfile
 - [x] [Add Badges](https://shields.io/)
 - [ ] Add Class Preprocessing
+- [ ] Sample Website
 - [ ] Push Docker image to hub
 - [ ] Add Regex to extract Name, DOB, Gender.
 
