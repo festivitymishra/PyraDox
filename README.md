@@ -1,4 +1,4 @@
-# PyraDox
+# PyraDox :page_with_curl:
 
 [![Language](https://img.shields.io/badge/Python-3.6.5-blue)](https://github.com/festivitymishra/PyraDox)
 [![Docker](https://img.shields.io/badge/Docker-Build-Suc)](https://github.com/festivitymishra/PyraDox)
