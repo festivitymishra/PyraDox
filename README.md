@@ -9,7 +9,7 @@ PyraDox is a simple tool which helps in document **digitization** by extracting 
 
 * **Aadhaar Card** is a 12-digit unique identity number that can be obtained voluntarily by residents or passport holders of India, based on their biometric and demographic data. The data is collected by the Unique Identification Authority of India (UIDAI), a statutory authority established in January 2009 by the government of India. 
 
-![PyraDox Features](PyraDox.jpg?raw=true "Features")
+![PyraDox Features](resources/PyraDox.jpg?raw=true "Features")
 
 *****************************************************
 
@@ -146,7 +146,7 @@ docker run -p 9001:9001 pyradox
 *****************************************************
 ## Samples
 
-![PyraDox Samples](PyraDox_Samples.jpg?raw=true "Samples")
+![PyraDox Samples](resources/PyraDox_Samples.jpg?raw=true "Samples")
 
 *****************************************************
 ## Contributing
