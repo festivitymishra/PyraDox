@@ -16,8 +16,8 @@ import uuid
 import base64
 import os
 # Initialize the Flask application
-app = Flask(__name__)
-
+#app = Flask(__name__)
+app = Flask(__name__, static_url_path='',static_folder='public');
 config = {'orient' : True,    #corrects orientation of image default -> True
           'skew' : False,     #corrects skewness of image default -> True
           'crop': True,       #crops document out of image default -> True
