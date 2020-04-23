@@ -1,6 +1,6 @@
 
 FROM debian:buster-slim as buildstage
-LABEL maintainer="Utsav Mishra <https://festivitymishra.github.io/>"
+LABEL maintainer="BS&T"
 
 # Install dependencies and Google tesseract
 RUN apt-get update && \
@@ -20,9 +20,9 @@ RUN pip install -r /aadhaar_ocr_masking/requirements.txt
 COPY Aadhaar.py /aadhaar_ocr_masking/Aadhaar.py
 COPY app.py /aadhaar_ocr_masking/app.py
 
-
+RUN mkdir /aadhaar_ocr_masking/input
+RUN mkdir /aadhaar_ocr_masking/public
+COPY public/* /aadhaar_ocr_masking/public/*
 
 WORKDIR /aadhaar_ocr_masking
-
 CMD ["python", "app.py"]
-
