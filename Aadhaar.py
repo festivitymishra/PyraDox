@@ -18,7 +18,7 @@ from scipy import ndimage
 import face_recognition
 
 
-class Aadhar_Card():
+class Aadhaar_Card():
     #Constructor
     def __init__(self,config = {'orient' : True,'skew' : True,'crop': True,'contrast' : True,'psm': [3,4,6],'mask_color': (0, 165, 255), 'brut_psm': [6]}):
         self.config = config
