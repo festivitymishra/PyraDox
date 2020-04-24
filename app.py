@@ -76,7 +76,7 @@ def validate():
 def ocr():
     ac = Aadhaar_Card(config);
     requestid=uuid.uuid4();
-    temp_name = "input/"+str(requestid)+".png" 
+    temp_name = "temp/"+str(requestid)+".png" 
     r = request.get_json(force=True)  #force=True #content type application/json
     
     image = r['doc_b64'] # raw data with base64 encoding
@@ -90,7 +90,7 @@ def ocr():
     headers = {'content-type': content_type}
     try:
         #print("Extracting Addhar")
-        print(ac.uuid);
+        #print(ac.uuid);
         aadhar=ac.extract(temp_name)
         delete_file(temp_name)
         return Response(response=jsonpickle.encode({'aadhaar_list':aadhar}), status=200, mimetype="application/json", headers=headers)
@@ -138,13 +138,14 @@ def mask():
 def brut_mask():
     ac = Aadhaar_Card(config);
     r = request.get_json(force=True)  #force=True #content type application/json
-    temp_name = "temp_unmasked.png" 
+    requestid=uuid.uuid4();
+    temp_name = "temp/"+str(requestid)+".png" 
     image = r['doc_b64'] # raw data with base64 encoding
     decoded_data = base64.b64decode(image)
     np_data = np.fromstring(decoded_data,np.uint8)
     img = cv2.imdecode(np_data,cv2.IMREAD_UNCHANGED)
     cv2.imwrite(temp_name,img)
-    write = "temp_brut_masked.png"
+    write = "temp/"+"temp_"+str(requestid)+".png"
     mask_status = ac.mask_nums(temp_name, write)
     delete_file(temp_name)
     content_type = 'application/json'
@@ -167,7 +168,9 @@ def sample_pipe():
     ac = Aadhaar_Card(config);
     flag_mask = 0
     r = request.get_json(force=True)  #force=True #content type application/json
-    temp_name = "temp_unmasked.png" 
+    requestid=uuid.uuid4();
+    temp_name = "temp/"+str(requestid)+".png" 
+ 
     image = r['doc_b64'] # raw data with base64 encoding
     decoded_data = base64.b64decode(image)
     np_data = np.fromstring(decoded_data,np.uint8)
@@ -179,7 +182,7 @@ def sample_pipe():
     
     if len(aadhaar_list) == 0 and r['brut']:
         mode_executed = "BRUT-OCR-MASKING"
-        write = "temp_brut_masked.png"
+        write = "temp/"+"temp_"+str(requestid)+".png" 
         mask_status = ac.mask_nums(temp_name, write)
         delete_file(temp_name)
         img_bytes = to_image_string(write)
@@ -197,7 +200,7 @@ def sample_pipe():
         # for masking first 8 digits from the number
         ori_aadhaar_list = aadhaar_list
         aadhaar_list = list(map(lambda x: x[:8] , aadhaar_list)) # Comment out this incase you want to mask entire aadhaar
-        write = "temp_masked.png"
+        write = "temp/temp_masked"+str(requestid)+".png"
         flag_mask = ac.mask_image(temp_name, write, aadhaar_list)
         delete_file(temp_name)
         img_bytes = to_image_string(write)
