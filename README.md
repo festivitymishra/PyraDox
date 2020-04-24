@@ -89,7 +89,7 @@ aadhaar_list = obj.extract("path of input image") #supported types (png, jpeg, j
 ```
 ##### C. Mask Aadhaar number card for given Aadhaar card number #Binary Output 1|0
 ```python
-flag = obj.mask("path of input image", "path of output image", aadhaar_list) #supported types (png, jpeg, jpg)
+flag = obj.mask_image("path of input image", "path of output image", aadhaar_list) #supported types (png, jpeg, jpg)
 ```
 ##### D. Brut Mask any Readable Number from Aadhaar (works well on low res, bad quality images)
 ```python
