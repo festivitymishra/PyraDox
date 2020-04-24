@@ -136,8 +136,21 @@ response_json = {'doc_b64_masked':base64_encoded_string, 'is_masked': True,'mode
 ```
 
 *****************************************************
-## PyraDox-API
+## PyraDox-UI
+### Go to Chrome browser  Enter url: http://localhost:9001/  
 
+
+> 1] Select aadhar image\
+>    Click "Choose File" & select adhar image.
+
+> 2] To Find Adhar number from Image \
+>    click "Extract Aadhar"
+
+> 3] To Brut Mask selected Addhar\
+>    Click "BrutMask"
+
+> 4] To Mask only 8 digit of selected Addhar\
+>    Click "Mask8Aadhar"
 
 
 *****************************************************
