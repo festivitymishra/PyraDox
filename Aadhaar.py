@@ -1,10 +1,10 @@
-#!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 """
-Created on Thu Mar 20 00:16:35 2020
+Created on Fri Apr 24 20:01:19 2020
 
-@author: utsav
+@author: Kshitija Surange
 """
+
 
 import cv2
 #from PIL import Image
@@ -17,14 +17,13 @@ import math
 from scipy import ndimage
 import face_recognition
 
-
 class Aadhaar_Card():
     #Constructor
     def __init__(self,config = {'orient' : True,'skew' : True,'crop': True,'contrast' : True,'psm': [3,4,6],'mask_color': (0, 165, 255), 'brut_psm': [6]}):
         self.config = config
-    # Validates Aadhar card numbers using Verhoeff Algorithm.
+    # Validates Aadhaar card numbers using Verhoeff Algorithm.
     # Fails if the fake number is generated using same Algorithm.
-    def validate(self,aadharNum):
+    def validate(self,aadhaarNum):
         
         mult = [[0, 1, 2, 3, 4, 5, 6, 7, 8, 9], [1, 2, 3, 4, 0, 6, 7, 8, 9, 5], [2, 3, 4, 0, 1, 7, 8, 9, 5, 6],
             [3, 4, 0, 1, 2, 8, 9, 5, 6, 7], [4, 0, 1, 2, 3, 9, 5, 6, 7, 8], [5, 9, 8, 7, 6, 0, 4, 3, 2, 1],
@@ -37,13 +36,13 @@ class Aadhaar_Card():
 
 
         try:
-            i = len(aadharNum)
+            i = len(aadhaarNum)
             j = 0
             x = 0
 
             while i > 0:
                 i -= 1
-                x = mult[x][perm[(j % 8)][int(aadharNum[i])]]
+                x = mult[x][perm[(j % 8)][int(aadhaarNum[i])]]
                 j += 1
             if x == 0:
                 return 1 
@@ -62,7 +61,8 @@ class Aadhaar_Card():
         self.read_image_cv()
         if self.config['orient']:
             self.cv_img = self.rotate(self.cv_img)
-            '''
+            
+        '''
 
             try:
                 self.cv_img = self.rotate(self.cv_img)
@@ -83,39 +83,39 @@ class Aadhaar_Card():
             print("Smart Crop not available")
         
         if self.config['contrast']:
-            #self.pil_img  = self.contrast_image(self.pil_img )
             self.cv_img  = self.contrast_image(self.cv_img)
+            #self.pil_img  = self.contrast_image(self.pil_img )
             print("correcting contrast")
             
-        aadhars = set()
+        aadhaars = set()
         for i in range(len(self.config['psm'])):
             t = self.text_extractor(self.cv_img,self.config['psm'][i])
-            anum = self.is_aadhar_card(t)
+            anum = self.is_aadhaar_card(t)
             uid = self.find_uid(t)
 
 
             if anum != "Not Found" and len(uid) == 0:
                 if len(anum) - anum.count(' ') == 12:
-                   aadhars.add(anum.replace(" ", ""))
+                   aadhaars.add(anum.replace(" ", ""))
             if anum == "Not Found" and len(uid) != 0:
 
-                aadhars.add(uid[0].replace(" ", ""))
+                aadhaars.add(uid[0].replace(" ", ""))
             if anum != "Not Found" and len(uid) != 0:
                 if len(anum) - anum.count(' ') == 12:
-                   aadhars.add(anum.replace(" ", ""))
+                   aadhaars.add(anum.replace(" ", ""))
                 #print(uid[0].strip())
-                aadhars.add(uid[0].replace(" ", ""))
+                aadhaars.add(uid[0].replace(" ", ""))
 
-        return list(aadhars)
+        return list(aadhaars)
     
-    def mask_image(self, path, write, aadhar_list):
-        #print("Read Path => ", path, " write path => ",write, "aadhar list =>",aadhar_list)
+    def mask_image(self, path, write, aadhaar_list):
+        #print("Read Path => ", path, " write path => ",write, "aadhaar list =>",aadhaar_list)
         self.mask_count = 0
         self.mask = cv2.imread(str(path), cv2.IMREAD_COLOR)
         for j in range(len(self.config['psm'])):
-            for i in range(len(aadhar_list)):
-                #print(" Runing mode: Aadhar number:",aadhar_list[i]," PSM => ",self.config['psm'][j])
-                if (self.mask_aadhar(aadhar_list[i],write,self.config['psm'][j]))>0:
+            for i in range(len(aadhaar_list)):
+                #print(" Runing mode: Aadhaar number:",aadhaar_list[i]," PSM => ",self.config['psm'][j])
+                if (self.mask_aadhaar(aadhaar_list[i],write,self.config['psm'][j]))>0:
                     self.mask_count = self.mask_count + 1
                 #print(" :\/ ",self.mask_count)
             
@@ -123,7 +123,7 @@ class Aadhaar_Card():
         cv2.imwrite(write,self.mask)
         return self.mask_count
     
-    def mask_aadhar(self, uid, out_path, psm):
+    def mask_aadhaar(self, uid, out_path, psm):
         d = self.box_extractor(self.mask, psm)
         n_boxes = len(d['level'])
         color = self.config['mask_color'] #BGR
@@ -140,12 +140,12 @@ class Aadhaar_Card():
 
     def read_image_cv(self):
         self.cv_img = cv2.imread(str(self.image_path), cv2.IMREAD_COLOR)
-     
+        
     '''
     def read_image_pil(self):
         self.pil_img = Image.open(self.image_path)
     '''
-    
+        
     def mask_nums(self, input_file, output_file):
         img = cv2.imread(str(input_file), cv2.IMREAD_COLOR)
         for i in range(len(self.config['brut_psm'])):      #'brut_psm': [6]
@@ -163,7 +163,6 @@ class Aadhaar_Card():
         cv2.imwrite(output_file,img)
 
         return "Done"
-    
     
     def rotate_only(self, img, angle_in_degrees):
         self.img = img
@@ -250,7 +249,6 @@ class Aadhaar_Card():
         thresh = cv2.threshold(gray, 0, 255, cv2.THRESH_BINARY | cv2.THRESH_OTSU)[1]
         #self.display(thresh)
         return thresh
-
     
     # Extracts Texts from images
     def text_extractor(self, img, psm):
@@ -280,16 +278,18 @@ class Aadhaar_Card():
             pass
         return list(uid)
     
-    #Function to validate if an image contains text showing its an aadhar card
-    def is_aadhar_card(self, text):
+    #Function to validate if an image contains text showing its an aadhaar card
+    def is_aadhaar_card(self, text):
                res=text.split()
-               aadhar_number=''
+               aadhaar_number=''
                for word in res:
                   if len(word) == 4 and word.isdigit():
-                      aadhar_number=aadhar_number  + word + ' '
-               if len(aadhar_number)>=14:
-                   return aadhar_number
+                      aadhaar_number=aadhaar_number  + word + ' '
+               if len(aadhaar_number)>=14:
+                   return aadhaar_number
                    
                else:
 
                     return "Not Found"
+                
+                
