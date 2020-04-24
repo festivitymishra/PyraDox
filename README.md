@@ -141,7 +141,7 @@ response_json = {'doc_b64_masked':base64_encoded_string, 'is_masked': True,'mode
 
 
 > 1] Select aadhar image\
->    Click "Choose File" & select adhar image.
+>    Click "Choose File" & select Aadhar image.
 
 > 2] To Find Adhar number from Image \
 >    click "Extract Aadhar"
@@ -149,7 +149,7 @@ response_json = {'doc_b64_masked':base64_encoded_string, 'is_masked': True,'mode
 > 3] To Brut Mask selected Addhar\
 >    Click "BrutMask"
 
-> 4] To Mask only 8 digit of selected Addhar\
+> 4] To Mask only 8 digit of selected Aadhar\
 >    Click "Mask8Aadhar"
 
 
