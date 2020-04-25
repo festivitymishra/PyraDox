@@ -232,6 +232,7 @@ class Aadhaar_Card():
             #self.display(img_rotated_final)
             if self.is_image_upside_down(img_rotated_final):
                 print("Kindly check the uploaded image, face encodings still not found!")
+                return img_rotated
             else:
                 print("image is now straight")
                 return img_rotated_final
