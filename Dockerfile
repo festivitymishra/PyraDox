@@ -1,4 +1,3 @@
-
 FROM debian:buster-slim as buildstage
 LABEL maintainer="Utsav Mishra <https://festivitymishra.github.io/>"
 
@@ -14,15 +13,16 @@ RUN apt-get update && \
 # Build Python APP Here
 RUN mkdir aadhaar_ocr_masking
 
+COPY requirements.txt /aadhaar_ocr_masking/requirements.txt
+RUN pip install -r /aadhaar_ocr_masking/requirements.txt
 
 COPY Aadhaar.py /aadhaar_ocr_masking/Aadhaar.py
 COPY app.py /aadhaar_ocr_masking/app.py
-COPY requirements.txt /aadhaar_ocr_masking/requirements.txt
 
-RUN cd aadhaar_ocr_masking && \
-    pip install -r requirements.txt
+RUN mkdir /aadhaar_ocr_masking/temp
+RUN mkdir /aadhaar_ocr_masking/public
+
+COPY public/* /aadhaar_ocr_masking/public/
 
 WORKDIR /aadhaar_ocr_masking
-
 CMD ["python", "app.py"]
-

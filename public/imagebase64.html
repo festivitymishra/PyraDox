@@ -1,0 +1,335 @@
+<html>
+
+<head>
+    <link rel="stylesheet" href="bootstrap.min.css" >
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+<script src="popper.min.js" ></script>
+<script src="bootstrap.min.js" ></script>
+    <style>
+        #leftbox { 
+                float:left;  
+                background:ghostwhite; 
+                width:46%; 
+                margin: 1.5%;
+                height:560px; 
+                padding: 1%;
+            } 
+            #middlebox{ 
+                float:left;  
+                background:Green; 
+                width:50%; 
+                margin: 5%;
+                height:280px; 
+            } 
+            #rightbox{ 
+                float:right; 
+                background:wheat; 
+                width:45%; 
+                margin: 1.5%;
+                padding: 1%;
+                height:560px; 
+            } 
+    </style>
+</head>
+
+
+<body>
+    <nav class="navbar justify-content-center navbar-expand-lg navbar-dark bg-dark">
+        <a class="navbar-brand" href="#">PyraDox</a>
+    </nav>
+    <br>
+    <input type="file" class="btn btn-warning" name="a">
+   
+    
+    <!-- <input type="submit" value="ValidateAadharnumber" name="ValidateAadharnumber" onclick="ValidateAadharnumber('397788000234')">  -->
+    <input type="submit" class="btn btn-primary" value="ExtractAadhar" name="receiveFromServer" onclick="ExtractAadhar()">
+    <input type="submit" class="btn btn-primary" value="BrutMask" name="BrutMask" onclick="BrutmasskAadharnumber()">
+    <input type="submit" class="btn btn-primary" value="Mask8Digits" name="Mask8Digits" onclick="Mask8Digits()">
+    <br>
+    <div  id="loader" class="d-flex justify-content-center"" hidden>
+        <div class="spinner-grow text-primary" role="status">
+            <span class="sr-only">Loading...</span>
+          </div>
+          <div class="spinner-grow text-secondary" role="status">
+            <span class="sr-only">Loading...</span>
+          </div>
+          <div class="spinner-grow text-success" role="status">
+            <span class="sr-only">Loading...</span>
+          </div>
+          <div class="spinner-grow text-danger" role="status">
+            <span class="sr-only">Loading...</span>
+          </div>
+          <div class="spinner-grow text-warning" role="status">
+            <span class="sr-only">Loading...</span>
+          </div>
+          <div class="spinner-grow text-info" role="status">
+            <span class="sr-only">Loading...</span>
+          </div>
+          <div class="spinner-grow text-light" role="status">
+            <span class="sr-only">Loading...</span>
+          </div>
+          <div class="spinner-grow text-dark" role="status">
+            <span class="sr-only">Loading...</span>
+          </div>
+        
+    </div>
+
+    <hr>
+    <div>
+         <div id = "leftbox"> 
+
+                Base64 to Image :<br>
+                <input type="image" id="pic1" style="height: 95%;width:100%">
+            </input>
+            </div>
+            
+            <div id = "rightbox">
+                <div id="MaskDetails"></div>
+
+
+            Mask Base64 to Image :<br>  
+                <input type="image" id="pic2" style="height: 95%;width:100%"> 
+            </input>
+        </div>
+         
+    </div>
+    
+
+   
+    <br>
+
+    Image Base64  Data : <br> 
+    Input any Base64 data in textarea & see image in Left Panel<input type="submit" name="base64ToImg" value="base64ToImage" onclick="base64ToImage()"> <br>
+
+    <textarea id="description" rows="10" cols="100">
+                                </textarea>
+
+    <br><br>
+</body>
+
+<script type="text/javascript">
+ $("#loader").hide();
+ $(".spinner-grow").hide();
+ 
+    var ImageInB64;
+    function base64ToImage() {
+        console.log("base64ToImage");
+        var base64data = document.getElementById("description").value
+        ImageInB64=base64data
+        insertText(base64data);
+
+    }
+    var input = document.querySelector('input[type=file]');
+    // You will receive the Base64 value every time a user selects a file from his device
+    // As an example I selected a one-pixel red dot GIF file from my computer
+    input.onchange = function () {
+        var file = input.files[0],
+            reader = new FileReader();
+
+
+        console.log(file);
+        reader.onloadend = function () {
+            // Since it contains the Data URI, we should remove the prefix and keep only Base64 string
+            console.log("##################");
+            console.log(reader.result);
+            var b64 = reader.result.replace(/^data:.+;base64,/, '');
+            console.log(b64); //->
+            insertText(b64);
+            ImageInB64 = b64;
+        };
+
+        reader.readAsDataURL(file);
+    };
+
+    function insertText(text) {
+        document.getElementById("description").innerHTML = text;
+        createImgeFromBase64(text);
+    }
+
+    function createImgeFromBase64(text) {
+        var image = new Image();
+        image.src = 'data:image/png;base64,' + text;
+        //document.body.appendChild(image);
+        document.getElementById("pic1").src = image.src;
+    }
+
+    function sendImage() {
+        getFromserver(ImageInB64)
+    }
+   
+
+    function createMaskImgeFromBase64(text) {
+        var image = new Image();
+        image.src = 'data:image/png;base64,' + text;
+        //document.body.appendChild(image);
+        document.getElementById("pic2").src = image.src;
+    }
+
+    function getFromserver(p_ImageInB64) {
+
+        var request = $.ajax({
+            url: "http://localhost:9001/api/test",
+            method: "POST",
+            headers: {
+                'Content-Type': "application/json"
+            },
+            data: JSON.stringify({ "image": "Sample", "data": p_ImageInB64 }),
+            dataType: "json",
+        })
+        request.done(function (body) {
+            
+            console.log(body);
+            
+            createMaskImgeFromBase64(body['masked_b64_image']['py/b64']);
+            
+
+        });
+
+        request.fail(function (jqXHR, textStatus) {
+            console.log(jqXHR);
+            console.log(textStatus);
+        });
+
+
+    }
+    
+    
+    
+    function ExtractAadhar() {
+        $("#loader").show();
+        $(".spinner-grow").show();
+        p_ImageInB64 =ImageInB64;
+        var request = $.ajax({
+            url: "http://localhost:9001/api/ocr",
+            method: "POST",
+            headers: {
+                'Content-Type': "application/json"
+            },
+            data: JSON.stringify({ "image": "Sample", "doc_b64": p_ImageInB64 }),
+            dataType: "json",
+        })
+        request.done(function (body) {
+            $("#loader").hide();
+            $(".spinner-grow").hide();
+            console.log(body);
+            
+            //createMaskImgeFromBase64(body['masked_b64_image']['py/b64']);
+            
+
+            document.getElementById("MaskDetails").innerText = "Response: "+JSON.stringify(body);
+
+            //if b64 not contains prefix data:image/png;base64 then use following method;
+            // createImgeFromBase64(text);
+        });
+
+        request.fail(function (jqXHR, textStatus) {
+            //alert("Request failed: " + textStatus);
+            $("#loader").hide();
+            $(".spinner-grow").hide();
+            console.log(jqXHR);
+            console.log(textStatus);
+        });
+    }
+    function ValidateAadharnumber(p_aadharnum) {
+        document.getElementById("MaskDetails").innerText = "";
+        var request = $.ajax({
+            url: "http://localhost:9001/api/validate",
+            method: "POST",
+            headers: {
+                'Content-Type': "application/json"
+            },
+            data: JSON.stringify({ "test_number": p_aadharnum }),
+            dataType: "json",
+        })
+        request.done(function (body) {
+            
+            console.log(body);
+            
+        
+        });
+
+        request.fail(function (jqXHR, textStatus) {
+            $("#loader").hide();
+            //alert("Request failed: " + textStatus);
+            console.log(jqXHR);
+            console.log(textStatus);
+        });
+    }
+
+
+    function BrutmasskAadharnumber() {
+        document.getElementById("MaskDetails").innerText = "";
+        $("#loader").show();
+        $(".spinner-grow").show();
+
+        p_ImageInB64 =ImageInB64;
+        var request = $.ajax({
+            url: "http://localhost:9001/api/brut_mask",
+            method: "POST",
+            headers: {
+                'Content-Type': "application/json"
+            },
+            data: JSON.stringify({ "doc_b64": p_ImageInB64 }),
+            dataType: "json",
+        })
+        request.done(function (body) {
+            $("#loader").hide();
+            $(".spinner-grow").hide();
+            console.log(body);
+            
+            createMaskImgeFromBase64(body['doc_b64_brut_masked']);
+            
+
+            //document.getElementById("pic1").src = text;
+
+            //if b64 not contains prefix data:image/png;base64 then use following method;
+            // createImgeFromBase64(text);
+        });
+
+        request.fail(function (jqXHR, textStatus) {
+            $("#loader").hide();
+            $(".spinner-grow").hide();
+            //alert("Request failed: " + textStatus);
+            console.log(jqXHR);
+            console.log(textStatus);
+        });
+    }
+    function Mask8Digits() {
+        document.getElementById("MaskDetails").innerText = "";
+        $("#loader").show();
+        
+        $(".spinner-grow").show();
+        p_ImageInB64 =ImageInB64;
+        var request = $.ajax({
+            url: "http://localhost:9001/api/Mask8Digits",
+            method: "POST",
+            headers: {
+                'Content-Type': "application/json"
+            },
+            data: JSON.stringify({ "doc_b64": p_ImageInB64 }),
+            dataType: "json",
+        })
+        request.done(function (body) {
+            $("#loader").hide();
+            $(".spinner-grow").hide();
+            console.log(body);
+            
+            createMaskImgeFromBase64(body['doc_b64_masked']);
+            
+
+        });
+
+        request.fail(function (jqXHR, textStatus) {
+            //alert("Request failed: " + textStatus);
+            $("#loader").hide();
+            $(".spinner-grow").hide();
+            console.log(jqXHR);
+            console.log(textStatus);
+        });
+    }
+
+    
+
+</script>
+
+</html>
