@@ -128,7 +128,7 @@ request_json = {"doc_b64": base64_encoded_string}
 response_json = {'doc_b64_brut_masked': base64_encoded_string, 'mask_status': 'Done'}
 
 ```
-##### E. Bonus :100: Complete Sample Pipeline. url =  '/api/sample_pipe'
+##### E. Bonus :100: Complete Sample Pipeline. url =  '/api/Mask8Digits'
 ###### Usecase : Take an aadhaar card, extract its aadhaar number while checking number's validty, mask first 8 digits. If aadhaar number is not readable then mask possible numbers (brut mode) .
 ```python
 request_json = {"doc_b64": base64_encoded_string, "brut" : True}
@@ -136,6 +136,25 @@ response_json = {'doc_b64_masked':base64_encoded_string, 'is_masked': True,'mode
 ```
 
 *****************************************************
+## PyraDox-UI
+### Go to Chrome browser  Enter url: http://localhost:9001/  
+
+
+> 1] Select aadhar image\
+>    Click "Choose File" & select Aadhar image.
+
+> 2] To Find Adhar number from Image \
+>    click "Extract Aadhar"
+
+> 3] To Brut Mask selected Addhar\
+>    Click "BrutMask"
+
+> 4] To Mask only 8 digit of selected Aadhar\
+>    Click "Mask8Aadhar"
+
+
+*****************************************************
+
 ## Docker
 ##### Build Your Own Image
 ```bash
@@ -157,7 +176,6 @@ Pull requests are welcome. For major changes, please open an issue first to disc
 - [x] Finish Dockerfile
 - [x] [Add Badges](https://shields.io/)
 - [ ] Add Class Preprocessing
-- [ ] Sample Website
 - [ ] Push Docker image to hub
 - [ ] Add Regex to extract Name, DOB, Gender.
 

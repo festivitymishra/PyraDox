@@ -82,6 +82,8 @@ def hit_api_brut_mask(input_name,output_name):
     cv2.imwrite(save_name,img)
     return "masked document saved as "+ save_name
 
+
+#Hit Simple Pipw which Mask 8 Digits of aadhar image
 def hit_api_sample_pipe(input_name,output_name,brut = False):
     img_bytes = to_image_string(input_name)
     #convert byte to string
@@ -90,7 +92,7 @@ def hit_api_sample_pipe(input_name,output_name,brut = False):
     content_type = 'application/json'
     headers = {'content-type': content_type}
     addr = 'http://localhost:9001'
-    url = addr + '/api/sample_pipe'
+    url = addr + '/api/Mask8Digits'
     response = requests.post(url, json={"doc_b64": encoded_string, "brut" : brut}, headers=headers)
     r = json.loads(response.text)
     if r['is_masked']:

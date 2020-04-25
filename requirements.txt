@@ -10,7 +10,8 @@ Pillow
 pytesseract==0.3.3
 regex==2020.2.20
 Werkzeug==1.0.0
-face_recognition
 scipy
-
+requests
+cmake
+face_recognition
 
