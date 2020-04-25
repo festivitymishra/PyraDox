@@ -1,4 +1,4 @@
-# PyraDox
+# PyraDox :page_with_curl:
 
 [![Language](https://img.shields.io/badge/Python-3.6.5-blue)](https://github.com/festivitymishra/PyraDox)
 [![Docker](https://img.shields.io/badge/Docker-Build-Suc)](https://github.com/festivitymishra/PyraDox)
@@ -9,7 +9,7 @@ PyraDox is a simple tool which helps in document **digitization** by extracting 
 
 * **Aadhaar Card** is a 12-digit unique identity number that can be obtained voluntarily by residents or passport holders of India, based on their biometric and demographic data. The data is collected by the Unique Identification Authority of India (UIDAI), a statutory authority established in January 2009 by the government of India. 
 
-![PyraDox Features](PyraDox.jpg?raw=true "Features")
+![PyraDox Features](resources/PyraDox.jpg?raw=true "Features")
 
 *****************************************************
 
@@ -89,7 +89,7 @@ aadhaar_list = obj.extract("path of input image") #supported types (png, jpeg, j
 ```
 ##### C. Mask Aadhaar number card for given Aadhaar card number #Binary Output 1|0
 ```python
-flag = obj.mask("path of input image", "path of output image", aadhaar_list) #supported types (png, jpeg, jpg)
+flag = obj.mask_image("path of input image", "path of output image", aadhaar_list) #supported types (png, jpeg, jpg)
 ```
 ##### D. Brut Mask any Readable Number from Aadhaar (works well on low res, bad quality images)
 ```python
@@ -165,7 +165,7 @@ docker run -p 9001:9001 pyradox
 *****************************************************
 ## Samples
 
-![PyraDox Samples](PyraDox_Samples.jpg?raw=true "Samples")
+![PyraDox Samples](resources/PyraDox_Samples.jpg?raw=true "Samples")
 
 *****************************************************
 ## Contributing

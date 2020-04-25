@@ -1,22 +1,23 @@
-#!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 """
-Created on Thu Mar 20 00:16:35 2020
+Created on Fri Apr 24 20:01:19 2020
 
-@author: utsav
+@author: Kshitija Surange
 """
 
+
 import cv2
-#from PIL import Image
+from PIL import Image
 import pytesseract
 from pytesseract import Output
 import re
-#import os
+
 import numpy as np
 import math
 from scipy import ndimage
 import face_recognition
 import uuid
+import os
 
 class Aadhaar_Card():
     #Constructor
@@ -77,6 +78,20 @@ class Aadhaar_Card():
         self.pil_img = self.pil_img.convert('RGBA')
         '''
             
+        '''
+
+            try:
+                self.cv_img = self.rotate(self.cv_img)
+            except:
+                self.read_image_pil()
+            else:
+                self.cv_img.save('1_temp.png')
+                self.pil_img = Image.open('1_temp.png')     
+                os.remove('1_temp.png')
+        
+        self.pil_img = self.pil_img.convert('RGBA')
+        '''
+            
         if self.config['skew']:
             print("skewness correction not available")
         
@@ -84,14 +99,18 @@ class Aadhaar_Card():
             print("Smart Crop not available")
         
         if self.config['contrast']:
-            #self.pil_img  = self.contrast_image(self.pil_img )
+
             self.cv_img  = self.contrast_image(self.cv_img)
+            #self.pil_img  = self.contrast_image(self.pil_img )
+
             print("correcting contrast")
             
         aadhars = set()
         for i in range(len(self.config['psm'])):
             t = self.text_extractor(self.cv_img,self.config['psm'][i])
+
             anum = self.is_aadhar_card(t)
+
             uid = self.find_uid(t)
 
 
@@ -141,12 +160,12 @@ class Aadhaar_Card():
 
     def read_image_cv(self):
         self.cv_img = cv2.imread(str(self.image_path), cv2.IMREAD_COLOR)
-     
+
     '''
     def read_image_pil(self):
         self.pil_img = Image.open(self.image_path)
     '''
-    
+
     def mask_nums(self, input_file, output_file):
         img = cv2.imread(str(input_file), cv2.IMREAD_COLOR)
         for i in range(len(self.config['brut_psm'])):      #'brut_psm': [6]
@@ -165,7 +184,7 @@ class Aadhaar_Card():
 
         return "Done"
     
-    
+
     def rotate_only(self, img, angle_in_degrees):
         self.img = img
         self.angle_in_degrees = angle_in_degrees
@@ -234,6 +253,7 @@ class Aadhaar_Card():
             #self.display(img_rotated_final)
             if self.is_image_upside_down(img_rotated_final):
                 print("Kindly check the uploaded image, face encodings still not found!")
+                return img_rotated
             else:
                 print("image is now straight")
                 return img_rotated_final
@@ -251,7 +271,6 @@ class Aadhaar_Card():
         thresh = cv2.threshold(gray, 0, 255, cv2.THRESH_BINARY | cv2.THRESH_OTSU)[1]
         #self.display(thresh)
         return thresh
-
     
     # Extracts Texts from images
     def text_extractor(self, img, psm):
@@ -294,3 +313,4 @@ class Aadhaar_Card():
                else:
 
                     return "Not Found"
+
