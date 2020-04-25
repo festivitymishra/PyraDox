@@ -1,10 +1,10 @@
-#!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 """
-Created on Thu Mar 20 00:16:35 2020
+Created on Fri Apr 24 20:01:19 2020
 
-@author: utsav
+@author: Kshitija Surange
 """
+
 
 import cv2
 from PIL import Image
@@ -56,6 +56,9 @@ class Aadhaar_Card():
         self.image_path = path
         self.read_image_cv()
         if self.config['orient']:
+            self.cv_img = self.rotate(self.cv_img)
+            
+        '''
 
             try:
                 self.cv_img = self.rotate(self.cv_img)
@@ -67,6 +70,7 @@ class Aadhaar_Card():
                 os.remove('1_temp.png')
         
         self.pil_img = self.pil_img.convert('RGBA')
+        '''
             
         if self.config['skew']:
             print("skewness correction not available")
@@ -75,12 +79,13 @@ class Aadhaar_Card():
             print("Smart Crop not available")
         
         if self.config['contrast']:
-            self.pil_img  = self.contrast_image(self.pil_img )
+            self.cv_img  = self.contrast_image(self.cv_img)
+            #self.pil_img  = self.contrast_image(self.pil_img )
             print("correcting contrast")
             
         aadhaars = set()
         for i in range(len(self.config['psm'])):
-            t = self.text_extractor(self.pil_img,self.config['psm'][i])
+            t = self.text_extractor(self.cv_img,self.config['psm'][i])
             anum = self.is_aadhaar_card(t)
             uid = self.find_uid(t)
 
@@ -132,8 +137,10 @@ class Aadhaar_Card():
     def read_image_cv(self):
         self.cv_img = cv2.imread(str(self.image_path), cv2.IMREAD_COLOR)
         
+    '''
     def read_image_pil(self):
         self.pil_img = Image.open(self.image_path)
+    '''
         
     def mask_nums(self, input_file, output_file):
         img = cv2.imread(str(input_file), cv2.IMREAD_COLOR)
@@ -153,48 +160,92 @@ class Aadhaar_Card():
 
         return "Done"
     
+    def rotate_only(self, img, angle_in_degrees):
+        self.img = img
+        self.angle_in_degrees = angle_in_degrees
+        rotated = ndimage.rotate(self.img, self.angle_in_degrees)
+        return rotated
     
+    def is_image_upside_down(self, img):
+        self.img = img
+        face_locations = face_recognition.face_locations(self.img)
+        encodings = face_recognition.face_encodings(self.img, face_locations)
+        image_is_upside_down = (len(encodings) == 0)
+        return image_is_upside_down
+    
+    ''' 
+    def save_image(self, img):
+        self.img = img
+        cv2.imwrite('orientation_corrected.jpg', self.img)
+
+           
+    def display(self, img, frameName="OpenCV Image"):
+        self.img = img
+        self.frameName = frameName
+        h, w = self.img.shape[0:2]   
+        neww = 800
+        newh = int(neww*(h/w))
+        self.img = cv2.resize(self.img, (neww, newh))
+        cv2.imshow(self.frameName, self.img)
+        cv2.waitKey(0)
+    '''
     
     # Corrects orientation of image using tesseract OSD if rotation Angle is < 100.
-    def rotate(self,image, center = None, scale = 1.0):
-
-        rotate_angle=int(re.search('(?<=Rotate: )\d+', pytesseract.image_to_osd(image)).group(0))
-
-        if rotate_angle > 100:
-            
-            img = Image.fromarray(image, 'RGB')
-            b, g, r = img.split()
-            img = Image.merge("RGB", (r, g, b))
-            return img
-
+    def rotate(self,img):
+        #def orientation_correction(img): #, save_image = False):
+        # GrayScale Conversion for the Canny Algorithm 
+        self.img = img
+        img_gray = cv2.cvtColor(self.img, cv2.COLOR_BGR2GRAY) 
+        #self.display(img_gray)
+        # Canny Algorithm for edge detection was developed by John F. Canny not Kennedy!! :)
+        img_edges = cv2.Canny(img_gray, 100, 100, apertureSize=3)
+        #self.display(img_edges)
+        # Using Houghlines to detect lines
+        lines = cv2.HoughLinesP(img_edges, 1, math.pi / 180.0, 100, minLineLength=100, maxLineGap=5)
+        img_copy = self.img.copy()
+        for x in range(0, len(lines)):
+            for x1,y1,x2,y2 in lines[x]:
+                cv2.line(img_copy,(x1,y1),(x2,y2),(0,255,0),2)
+        #cv2.imshow('hough',img_copy)
+        #cv2.waitKey(0)
+        
+        angles = []
+        for x1, y1, x2, y2 in lines[0]:
+            angle = math.degrees(math.atan2(y2 - y1, x2 - x1))
+            angles.append(angle)
+        
+        # Getting the median angle
+        median_angle = np.median(angles)
+        # Rotating the image with this median angle
+        img_rotated = self.rotate_only(self.img, median_angle)
+        #self.display(img_rotated)
+        
+        if self.is_image_upside_down(img_rotated):
+            print("rotate to 180 degree")
+            angle = -180
+            img_rotated_final = self.rotate_only(img_rotated, angle)
+            #self.save_image(img_rotated_final)
+            #self.display(img_rotated_final)
+            if self.is_image_upside_down(img_rotated_final):
+                print("Kindly check the uploaded image, face encodings still not found!")
+                return img_rotated
+            else:
+                print("image is now straight")
+                return img_rotated_final
         else:
-            angle=360-int(re.search('(?<=Rotate: )\d+', pytesseract.image_to_osd(image)).group(0))
-            (h, w) = image.shape[:2]
+            #self.display(img_rotated)
+            print("image is straight")
+            return img_rotated
 
-            if center is None:
-                center = (w / 2, h / 2)
-
-            # Perform the rotation
-            M = cv2.getRotationMatrix2D(center, angle, scale)
-            rotated = cv2.warpAffine(image, M, (w, h))
-
-            img = Image.fromarray(rotated, 'RGB')
-            b, g, r = img.split()
-            img = Image.merge("RGB", (r, g, b))
-
-            return img
         
     # Turns images BnW using pixels, didn't have much success with this and skipped in final production 
     def contrast_image(self, img):
-        pix = img.load()
-        # taking pixel value for using in ocr
-        for y in range(img.size[1]):
-            for x in range(img.size[0]):
-                if pix[x, y][0] < 102 or pix[x, y][1] < 102 or pix[x, y][2] < 102:
-                    pix[x, y] = (0, 0, 0, 255)
-                else:
-                    pix[x, y] = (255, 255, 255, 255)
-        return img
+        self.img = img
+        gray = cv2.cvtColor(self.img, cv2.COLOR_BGR2GRAY)
+        #gray = cv2.bitwise_not(gray)
+        thresh = cv2.threshold(gray, 0, 255, cv2.THRESH_BINARY | cv2.THRESH_OTSU)[1]
+        #self.display(thresh)
+        return thresh
     
     # Extracts Texts from images
     def text_extractor(self, img, psm):
